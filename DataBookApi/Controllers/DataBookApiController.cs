@@ -6,7 +6,7 @@ using DataBookApi.Models;
 
 namespace DataBookApi.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class DataBookApiController : ControllerBase
@@ -17,39 +17,34 @@ namespace DataBookApi.Controllers
             dataBookData = dBData;
         }
 
-        // GET api/MyApi
         [HttpGet]
         [AllowAnonymous]
-        public IEnumerable<IDataBook> Get()
+        public IEnumerable<IDataBook> GetDataBooks()
         {
             return dataBookData.GetAllDatabooks();
         }
 
-        // GET api/MyApi/1
         [HttpGet("{id}")]
         public IDataBook GetDataBookById(int id)
         {
             return dataBookData.ReadDataBook(id);
         }
 
-        // POST api/MyApi
         [HttpPost]
         public void Post([FromBody] DataBook dataBook)
         {
             dataBookData.CreateDataBook(dataBook);
         }
 
-        // PUT api/MyApi/3
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public void Put(int id, [FromBody] DataBook dataBook)
         {
             dataBookData.UpdateDataBookById(id, dataBook);
         }
 
-        // DELETE api/MyApi/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public void Delete(int id)
         {
             dataBookData.DeleteDataBookById(id);

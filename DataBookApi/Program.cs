@@ -20,7 +20,8 @@ namespace DataBookApi
 
             builder.Services.AddDbContext<DataBookContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<IDataBookData, DataBookData>();
+            builder.Services.AddTransient<IDataBookData, DataBookData>();
+            builder.Services.AddTransient<IAccount, Account>();
 
             builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<DataBookContext>()
