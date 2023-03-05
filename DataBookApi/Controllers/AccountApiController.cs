@@ -25,6 +25,14 @@ namespace DataBookApi.Controllers
             _account = account;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public List<User> UserList()
+        {
+            return _userManager.Users.ToList();
+        }
+
+
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
@@ -55,6 +63,21 @@ namespace DataBookApi.Controllers
             }
             else
                 return BadRequest();
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [Route("{name}")]
+        public async Task<IActionResult> Delete(string name)
+        {
+            // получаем пользователя
+            User user = await _userManager.FindByNameAsync(name);
+            if (user != null)
+            {
+                IdentityResult result = await _userManager.DeleteAsync(user);
+                return new ObjectResult(name);
+            }
+            return BadRequest();
         }
 
         private string GenerateToken(string username, IEnumerable<string> roles)
