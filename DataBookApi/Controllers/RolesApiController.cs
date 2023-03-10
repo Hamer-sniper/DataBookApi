@@ -9,8 +9,7 @@ using System.Xml.Linq;
 
 namespace DataBookApi.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]    
     [Route("api/[controller]")]
     [ApiController]
     public class RolesApiController : Controller
@@ -25,12 +24,14 @@ namespace DataBookApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public List<IdentityRole> GetRoles()
         {
             return _roleManager.Roles.ToList();
         }
 
         [HttpPost("{name}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(string name)
         {
             if (!string.IsNullOrEmpty(name))
@@ -52,6 +53,7 @@ namespace DataBookApi.Controllers
         }
 
         [HttpDelete("{name}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string name)
         {
             IdentityRole role = await _roleManager.FindByNameAsync(name);
@@ -64,6 +66,7 @@ namespace DataBookApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [Route("GetUserAndRoles/{name}")]
         public async Task<IActionResult> GetUserAndRoles(string name)
         {
@@ -87,7 +90,15 @@ namespace DataBookApi.Controllers
             return NotFound();
         }
 
+        [HttpGet]
+        [Route("GetCurrentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            return await GetUserAndRoles(HttpContext.User.Identity.Name); 
+        }
+
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("EditUserAndRoles/{name}")]
         public async Task<IActionResult> EditUserAndRoles(string name, [FromBody] List<string> roles)
         {
